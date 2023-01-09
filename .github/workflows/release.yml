@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     name: homebrew-releaser
     steps:
-      - name: Release for-tools to easytocloud/homebrew-tap
+      - name: Release cloud9-to-power-vscode-blog to easytocloud/homebrew-tap
         uses: Justintime50/homebrew-releaser@v1
         with:
           # The name of the homebrew tap to publish your formula to as it appears on GitHub.
