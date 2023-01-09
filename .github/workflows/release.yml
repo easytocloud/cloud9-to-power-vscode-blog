@@ -39,7 +39,7 @@ jobs:
           # Custom install command for your formula.
           # Required - string.
           install: |
-            bin.install "distribution/bin/aws-proxy"
+            bin.install "distribution/bin/aws-proxy.sh"
             bin.install "distribution/bin/cloud9-mod.json"
             
 
