@@ -1,9 +1,25 @@
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: MIT-0
 
+# Modified by erik@easytocloud.com for use with modified cloud9-to-power-vscode
+
 # Update hostname with your AWS Cloud9 EC2 instance ID
 Host cloud9
     IdentityFile ~/.ssh/id_rsa-cloud9
     User ec2-user
     HostName i-XXXXXXXXXXXXXXXXX
-    ProxyCommand sh -c "~/.ssh/ssm-proxy.sh %h %p"
+    ProxyCommand sh -c "/usr/local/bin/aws-proxy.sh %h %p"
+
+Host cloud9-full-options
+    IdentityFile ~/.ssh/id_rsa-cloud9
+    User ec2-user
+    HostName i-YYYYYYYYYYYYYYYYY
+    ProxyCommand sh -c "/usr/local/bin/aws-proxy.sh %h %p SomeRole standard eu-west-1"
+
+# when used with easytocloud aws-profile-organizer, use environment as 4th parameter
+
+Host cloud9-full-options-with-profile-organizer
+    IdentityFile ~/.ssh/id_rsa-cloud9
+    User ec2-user
+    HostName i-ZZZZZZZZZZZZZZZZZ
+    ProxyCommand sh -c "/usr/local/bin/aws-proxy.sh %h %p SomeRole SomeEnv eu-west-1"

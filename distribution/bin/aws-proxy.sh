@@ -76,7 +76,7 @@ aws ssm send-command \
     --targets "Key=InstanceIds,Values=${HOST}" \
     --cli-input-json file://${C9MODSFILE}
 
-# actually setup SSH session ..
+# actually setup SSM session ..
 # .. by first pushing a public key to the instance
 aws ec2-instance-connect send-ssh-public-key \
     --instance-id "${HOST}" \
