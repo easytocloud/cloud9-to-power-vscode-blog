@@ -22,7 +22,7 @@
 
 is_active()
 {
-    pgrep -f vfs-worker >/dev/null || pgrep -fa vscode-server | grep -v -F 'shellIntegration-bash.sh' >/dev/null
+    pgrep -f vfs-worker >/dev/null || pgrep -u ec2-user -f .vscode-server/bin/ -a | grep -v -F 'shellIntegration-bash.sh' >/dev/null
 }
 
 is_shutting_down() {
