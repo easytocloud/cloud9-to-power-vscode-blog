@@ -8,13 +8,13 @@ Host cloud9
     IdentityFile ~/.ssh/id_rsa-cloud9
     User ec2-user
     HostName i-XXXXXXXXXXXXXXXXX
-    ProxyCommand sh -c "/usr/local/bin/aws-proxy.sh %h %p"
+    ProxyCommand sh -c "aws-proxy.sh %h %p"
 
 Host cloud9-full-options
     IdentityFile ~/.ssh/id_rsa-cloud9
     User ec2-user
     HostName i-YYYYYYYYYYYYYYYYY
-    ProxyCommand sh -c "/usr/local/bin/aws-proxy.sh %h %p SomeRole standard eu-west-1"
+    ProxyCommand sh -c "aws-proxy.sh %h %p SomeRole standard eu-west-1"
 
 # when used with easytocloud aws-profile-organizer, use environment as 4th parameter
 
@@ -22,4 +22,4 @@ Host cloud9-full-options-with-profile-organizer
     IdentityFile ~/.ssh/id_rsa-cloud9
     User ec2-user
     HostName i-ZZZZZZZZZZZZZZZZZ
-    ProxyCommand sh -c "/usr/local/bin/aws-proxy.sh %h %p SomeRole SomeEnv eu-west-1"
+    ProxyCommand sh -c "aws-proxy.sh %h %p SomeRole SomeEnv eu-west-1"
