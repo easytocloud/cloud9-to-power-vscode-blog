@@ -2,6 +2,8 @@
 
 # Based on AWS default cloud9 script, this is an improved version for use with C9 and VSCODE
 #
+# How it works:
+#
 # cron - by means of /etc/crond.d/c9-automatic-shutdown - runs this script every minute
 # the script schedules a shutdown in 'SHUTDOWN_TIMEOUT' minutes when instance is idle
 # if whithin the shutdown timeout period activity is detected (e.g. reconnect), the shutdown is canceled
@@ -18,11 +20,18 @@
 
 # active ssh/ssm sessions are not taken into account for idle detection !!
 
+# History:
+#
+# 2023-11-09: version 4 - improved idle detection; vscode-server path changed from bin to cli
+# earlier versions not recorded in this file
+#
+
 # -- functions --
 
 is_active()
 {
-    pgrep -f vfs-worker >/dev/null || pgrep -u ec2-user -f .vscode-server/bin/ -a | grep -v -F 'shellIntegration-bash.sh' >/dev/null
+    pgrep -f vfs-worker >/dev/null || 
+    pgrep -u ec2-user -f .vscode-server/ -a | grep -v -F 'shellIntegration-bash.sh' >/dev/null
 }
 
 is_shutting_down() {
