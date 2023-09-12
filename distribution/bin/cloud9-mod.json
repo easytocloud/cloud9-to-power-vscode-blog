@@ -2,8 +2,8 @@
     "Parameters": {
         "commands": [
             "#! /usr/bin/env bash",
-            "test -f ~ec2-user/.c9/stop-if-inactive.sh-SAVE_v5 && exit 0",
-            "sudo mv ~ec2-user/.c9/stop-if-inactive.sh ~ec2-user/.c9/stop-if-inactive.sh-SAVE_v5",
+            "test -f ~ec2-user/.c9/stop-if-inactive.sh-SAVE_v0.2.0 && exit 0",
+            "sudo mv ~ec2-user/.c9/stop-if-inactive.sh ~ec2-user/.c9/stop-if-inactive.sh-SAVE_v0.2.0",
             "curl https://raw.githubusercontent.com/easytocloud/cloud9-to-power-vscode-blog/main/distribution/scripts/stop-if-inactive.sh -o ~ec2-user/.c9/stop-if-inactive.sh",
             "sudo chown root:root ~ec2-user/.c9/stop-if-inactive.sh",
             "sudo chmod 755 ~ec2-user/.c9/stop-if-inactive.sh"
