@@ -22,16 +22,30 @@
 
 # History:
 #
+# 2023-11-12: version 5 - improved idle detection; due to changes in vscode-server, idle detection is now more reliable
 # 2023-11-09: version 4 - improved idle detection; vscode-server path changed from bin to cli
 # earlier versions not recorded in this file
 #
 
 # -- functions --
 
+exec 3> /home/ec2-user/.c9/autoshutdown-log
+
+is_web_active()
+{
+    printf "\n$(date): output is_web_active():\n" >&3
+    pgrep -f vfs-worker >&3
+}
+
+is_codeserver_active()
+{
+    printf "\n$(date): output is_codeserver_active():\n" >&3
+    pgrep -u ec2-user -f .vscode-server/ -a | grep -v -F 'shellIntegration-bash.sh' >&3
+}
+
 is_active()
 {
-    pgrep -f vfs-worker >/dev/null || 
-    pgrep -u ec2-user -f .vscode-server/ -a | grep -v -F 'shellIntegration-bash.sh' >/dev/null
+    is_web_active || is_codeserver_active
 }
 
 is_shutting_down() {
@@ -56,20 +70,28 @@ set -euo pipefail
 CONFIG=$(cat /home/ec2-user/.c9/autoshutdown-configuration)
 SHUTDOWN_TIMEOUT=${CONFIG#*=}
 if ! [[ $SHUTDOWN_TIMEOUT =~ ^[0-9]*$ ]]; then
-    echo "shutdown timeout is invalid in /home/ec2-user/.c9/autoshutdown-configuration"
+    printf "\n*** shutdown timeout is invalid in /home/ec2-user/.c9/autoshutdown-configuration\n*** AUTOSHUTDOWN deactivated" >&3
     exit 1
 fi
 
 touch "/home/ec2-user/.c9/autoshutdown-timestamp"
 
+echo "$(date): starting evaluation" >&3
+
 if is_active; then
+    printf "\n$(date): activity detected, " >&3
     if is_shutting_down; then
         cancel_shutdown
-        echo "$(date): canceled shutdown "> "/home/ec2-user/.c9/autoshutdown-timestamp"
+        echo "canceled shutdown " >&3
+    else
+        echo "not shutting down" >&3
     fi
 else
+    printf "\n$(date): NO activity detected, " >&3
     if ! is_shutting_down ; then
         sudo shutdown -h $SHUTDOWN_TIMEOUT
-        echo "$(date): initiated shutdown with waiting time of ${SHUTDOWN_TIMEOUT} minutes"> "/home/ec2-user/.c9/autoshutdown-timestamp"
+        echo "initiated shutdown with waiting time of ${SHUTDOWN_TIMEOUT} minutes" >&3
+    else
+        echo "shutdown scheduled ${SHUTDOWN_TIMEOUT} minutes after $(stat -c '%z' /run/systemd/shutdown/scheduled | cut -f2 -d' ' | cut -f-2 -d: )" >&3
     fi
 fi
