@@ -22,9 +22,14 @@
 
 # History:
 #
-# 2023-11-12: version 5 - improved idle detection; due to changes in vscode-server, idle detection is now more reliable
-# 2023-11-09: version 4 - improved idle detection; vscode-server path changed from bin to cli
-# earlier versions not recorded in this file
+# 2023-11-12: version 0.3.0 
+#             fundamental rewrite of idle detection vscode-server
+#             - use lsof to check for established connection
+#             more comprehensive logging
+#             improved error handling
+#             semantic versioning
+# 
+# earlier history/versions not recorded in this file
 #
 
 # -- functions --
@@ -40,7 +45,26 @@ is_web_active()
 is_codeserver_active()
 {
     printf "\n$(date): output is_codeserver_active():\n" >&3
-    pgrep -u ec2-user -f .vscode-server/ -a | grep -v -F 'shellIntegration-bash.sh' >&3
+
+    # server is started as sh .... server-main, so we need to filter out the sh process
+
+    server=$(pgrep -f server-main -a | grep -v 'sh ' | awk '{print $1}')
+    if [[ -z "$server" ]]; then
+        echo "no server found" >&3
+        return 1
+    fi
+    echo "server pid: $server" >&3
+
+    # check if server has established connection
+
+    established=$(/usr/sbin/lsof -i | grep ESTABLISHED | grep $server )
+    if [[ -z "$established" ]]; then
+        echo "no established connection found" >&3
+        return 1
+    fi
+    echo "established connection: $established" >&3
+
+    return 0
 }
 
 is_active()
@@ -89,9 +113,9 @@ if is_active; then
 else
     printf "\n$(date): NO activity detected, " >&3
     if ! is_shutting_down ; then
-        sudo shutdown -h $SHUTDOWN_TIMEOUT
+        sudo shutdown -h $SHUTDOWN_TIMEOUT 
         echo "initiated shutdown with waiting time of ${SHUTDOWN_TIMEOUT} minutes" >&3
     else
-        echo "shutdown scheduled ${SHUTDOWN_TIMEOUT} minutes after $(stat -c '%z' /run/systemd/shutdown/scheduled | cut -f2 -d' ' | cut -f-2 -d: )" >&3
+        echo "shutdown still scheduled ${SHUTDOWN_TIMEOUT} minutes after $(stat -c '%z' /run/systemd/shutdown/scheduled | cut -f2 -d' ' | cut -f-2 -d: )" >&3
     fi
 fi
