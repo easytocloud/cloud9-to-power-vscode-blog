@@ -60,6 +60,7 @@ jobs:
           # Required - string.
           install: |
             bin.install "distribution/bin/aws-proxy.sh"
+            bin.install "distribution/bin/cloud9-proxy.sh"
             bin.install "distribution/bin/cloud9-mod.json"
             
 
